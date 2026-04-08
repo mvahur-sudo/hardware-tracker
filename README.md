@@ -89,12 +89,18 @@ cp .env.example .env
 docker compose up --build
 ```
 
+Runtime is now a **single app container**:
+
+- one public container for web + api together
+- one PostgreSQL container
+
+The app container exposes only the web port externally and proxies `/api/*` internally to the bundled NestJS API.
+
 ## Automatic container publishing
 
-GitHub Actions now publishes multi-arch images to GitHub Container Registry (GHCR):
+GitHub Actions now publishes one multi-arch image to GitHub Container Registry (GHCR):
 
-- `ghcr.io/mvahur-sudo/hardware-tracker-api`
-- `ghcr.io/mvahur-sudo/hardware-tracker-web`
+- `ghcr.io/mvahur-sudo/hardware-tracker`
 
 Publishing rules:
 
@@ -191,7 +197,7 @@ git push origin v1.0.0
 
 That triggers:
 
-- Docker build for API and Web
+- Docker build for the combined app image
 - push to GHCR
 - GitHub Release generation
 
@@ -200,8 +206,8 @@ That triggers:
 - use strong `JWT_SECRET`
 - set real `APP_BASE_URL`
 - run behind reverse proxy with HTTPS
-- keep `sameSite=none` only when needed cross-site
 - rotate seed credentials or disable them outside local development
+- set `RUN_DB_SEED=false` after first bootstrap in production
 - add proper Prisma SQL migrations before production rollout
 
 ## Assumptions

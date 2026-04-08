@@ -18,16 +18,6 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - image: hardware-tracker-api
-            dockerfile: apps/api/Dockerfile
-            context: .
-          - image: hardware-tracker-web
-            dockerfile: apps/web/Dockerfile
-            context: .
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,7 +39,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
+          images: ghcr.io/${{ github.repository_owner }}/hardware-tracker
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -61,8 +51,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ${{ matrix.context }}
-          file: ${{ matrix.dockerfile }}
+          context: .
+          file: Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -80,12 +70,10 @@ jobs:
         with:
           generate_release_notes: true
           body: |
-            Container images published:
+            Container image published:
 
-            - `ghcr.io/${{ github.repository_owner }}/hardware-tracker-api:${{ github.ref_name }}`
-            - `ghcr.io/${{ github.repository_owner }}/hardware-tracker-web:${{ github.ref_name }}`
+            - `ghcr.io/${{ github.repository_owner }}/hardware-tracker:${{ github.ref_name }}`
 
             Rolling tags for this release:
 
-            - `ghcr.io/${{ github.repository_owner }}/hardware-tracker-api:latest`
-            - `ghcr.io/${{ github.repository_owner }}/hardware-tracker-web:latest`
+            - `ghcr.io/${{ github.repository_owner }}/hardware-tracker:latest`

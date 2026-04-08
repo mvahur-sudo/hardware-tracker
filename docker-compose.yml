@@ -16,10 +16,10 @@ services:
       timeout: 5s
       retries: 10
 
-  api:
+  app:
     build:
       context: .
-      dockerfile: apps/api/Dockerfile
+      dockerfile: Dockerfile
     restart: unless-stopped
     env_file:
       - .env
@@ -28,27 +28,15 @@ services:
       JWT_SECRET: ${JWT_SECRET:-change-this-to-a-long-random-secret}
       APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3000}
       COOKIE_DOMAIN: ${COOKIE_DOMAIN:-localhost}
-      PORT: ${API_PORT:-4000}
-    ports:
-      - '${API_PORT:-4000}:4000'
-    depends_on:
-      db:
-        condition: service_healthy
-
-  web:
-    build:
-      context: .
-      dockerfile: apps/web/Dockerfile
-    restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
       PORT: ${WEB_PORT:-3000}
+      API_PORT: 4000
+      INTERNAL_API_URL: http://127.0.0.1:4000
+      RUN_DB_SEED: ${RUN_DB_SEED:-true}
     ports:
       - '${WEB_PORT:-3000}:3000'
     depends_on:
-      - api
+      db:
+        condition: service_healthy
 
 volumes:
   postgres_data:
