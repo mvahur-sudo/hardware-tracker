@@ -20,9 +20,9 @@ ENV PORT=3000
 ENV API_PORT=4000
 ENV INTERNAL_API_URL=http://127.0.0.1:4000
 RUN corepack enable
-COPY package.json pnpm-workspace.yaml tsconfig.base.json ./
+COPY package.json pnpm-workspace.yaml tsconfig.base.json pnpm-lock.yaml ./
 COPY apps/api/package.json apps/api/package.json
-RUN pnpm install --filter api... --prod --frozen-lockfile=false
+RUN pnpm install --filter api... --frozen-lockfile=false
 COPY --from=build /app/apps/api/dist apps/api/dist
 COPY --from=build /app/apps/api/prisma apps/api/prisma
 COPY --from=build /app/apps/web/.next/standalone ./
