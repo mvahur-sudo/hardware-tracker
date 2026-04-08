@@ -8,7 +8,7 @@ RUN pnpm install --filter api... --frozen-lockfile=false
 FROM deps AS build
 WORKDIR /app
 COPY . .
-RUN pnpm --filter api prisma generate
+RUN pnpm --filter api exec prisma generate
 RUN pnpm --filter api build
 
 FROM node:22-alpine AS runner
@@ -23,4 +23,4 @@ COPY --from=build /app/apps/api/prisma apps/api/prisma
 COPY --from=build /app/apps/api/node_modules/.prisma apps/api/node_modules/.prisma
 WORKDIR /app/apps/api
 EXPOSE 4000
-CMD ["sh", "-c", "pnpm prisma migrate deploy && pnpm prisma db seed && node dist/main.js"]
+CMD ["sh", "-c", "pnpm exec prisma migrate deploy && pnpm exec prisma db seed && node dist/main.js"]
