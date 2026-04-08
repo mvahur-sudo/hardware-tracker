@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { FormEvent, use, useEffect, useState } from 'react';
 import { ProtectedPage } from '../../../../components/protected-page';
 import { AssetForm } from '../../../../components/asset-form';
@@ -169,7 +170,7 @@ function AssetDetailInner({
         </div>
         <div className="panel stack">
           <h3>{dict.assets.qr}</h3>
-          <img className="qr" src={`${apiBaseUrl()}/api/assets/${currentAsset.id}/qr.png`} alt="QR" />
+          <Image className="qr" src={`${apiBaseUrl()}/api/assets/${currentAsset.id}/qr.png`} alt="QR" width={220} height={220} unoptimized />
           <a className="secondary" href={`${apiBaseUrl()}/api/assets/${currentAsset.id}/qr.png`} target="_blank">Download QR</a>
         </div>
       </div>
