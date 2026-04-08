@@ -89,6 +89,19 @@ cp .env.example .env
 docker compose up --build
 ```
 
+## Automatic container publishing
+
+GitHub Actions now publishes multi-arch images to GitHub Container Registry (GHCR):
+
+- `ghcr.io/mvahur-sudo/hardware-tracker-api`
+- `ghcr.io/mvahur-sudo/hardware-tracker-web`
+
+Publishing rules:
+
+- push to `main` → fresh branch and sha tags
+- push tag `v*.*.*` → version tags + `latest`
+- tag release also creates a GitHub Release automatically
+
 ## Seed users for local dev
 
 All seed users use password:
@@ -166,6 +179,21 @@ pnpm --filter api exec jest --runInBand
 cd apps/api
 pnpm exec jest --config ./test/jest-e2e.json --runInBand
 ```
+
+## Release process
+
+First stable release tag format:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+That triggers:
+
+- Docker build for API and Web
+- push to GHCR
+- GitHub Release generation
 
 ## Production notes
 
