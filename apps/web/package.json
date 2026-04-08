@@ -1,0 +1,27 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "format": "prettier --write \"app/**/*.tsx\" \"components/**/*.tsx\" \"lib/**/*.ts\""
+  },
+  "dependencies": {
+    "@zxing/browser": "^0.1.5",
+    "next": "15.2.4",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "eslint": "^9.25.1",
+    "eslint-config-next": "15.2.4",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  }
+}

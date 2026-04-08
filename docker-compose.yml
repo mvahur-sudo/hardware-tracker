@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-hardware_tracker}
+      POSTGRES_USER: ${POSTGRES_USER:-hardware_tracker}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hardware_tracker}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-hardware_tracker} -d ${POSTGRES_DB:-hardware_tracker}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://hardware_tracker:hardware_tracker@db:5432/hardware_tracker?schema=public}
+      JWT_SECRET: ${JWT_SECRET:-change-this-to-a-long-random-secret}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3000}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-localhost}
+      PORT: ${API_PORT:-4000}
+    ports:
+      - '${API_PORT:-4000}:4000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+      PORT: ${WEB_PORT:-3000}
+    ports:
+      - '${WEB_PORT:-3000}:3000'
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
