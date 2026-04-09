@@ -5,7 +5,7 @@ cd /app/apps/api
 pnpm exec prisma generate
 pnpm exec prisma migrate deploy
 if [ "${RUN_DB_SEED:-true}" = "true" ]; then
-  TS_NODE_COMPILER_OPTIONS='{"module":"CommonJS","moduleResolution":"Node"}' pnpm exec prisma db seed
+  npx ts-node --transpile-only --skip-project -O '{"module":"CommonJS","moduleResolution":"Node"}' prisma/seed.ts
 fi
 node dist/main.js &
 API_PID=$!
