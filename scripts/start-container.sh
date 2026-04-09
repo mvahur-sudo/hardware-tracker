@@ -11,6 +11,8 @@ if [ "${RUN_DB_SEED:-true}" = "true" ]; then
   TS_NODE_COMPILER_OPTIONS='{"module":"CommonJS","moduleResolution":"Node"}' npx ts-node --transpile-only --skip-project -O '{"module":"CommonJS","moduleResolution":"Node"}' prisma/seed.ts &
   SEED_PID=$!
   echo "Seed PID: $SEED_PID"
+else
+  SEED_PID=""
 fi
 
 echo "Starting API server..."
@@ -19,10 +21,18 @@ API_PID=$!
 
 cleanup() {
   echo "Cleaning up..."
-  kill "$SEED_PID" 2>/dev/null || true
+  [ -n "${SEED_PID:-}" ] && kill "$SEED_PID" 2>/dev/null || true
   kill "$API_PID" 2>/dev/null || true
 }
 trap cleanup INT TERM EXIT
 
 cd /app
-exec node server.js
+if [ -f /app/server.js ]; then
+  exec node /app/server.js
+elif [ -f /app/apps/web/server.js ]; then
+  exec node /app/apps/web/server.js
+else
+  echo "Web server entrypoint not found. Checked /app/server.js and /app/apps/web/server.js"
+  find /app -maxdepth 3 \( -name server.js -o -path '*/.next/standalone*' \) 2>/dev/null || true
+  exit 1
+fi
