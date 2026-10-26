@@ -1,6 +1,6 @@
-FROM node:22-alpine AS deps
+FROM node:26.12.1-alpine AS deps
 WORKDIR /app
-RUN corepack enable
+RUN npm install --global pnpm@10.32.1
 COPY package.json pnpm-workspace.yaml tsconfig.base.json ./
 COPY apps/api/package.json apps/api/package.json
 COPY apps/web/package.json apps/web/package.json
@@ -13,13 +13,13 @@ RUN pnpm --filter api exec prisma generate
 RUN pnpm --filter api build
 RUN pnpm --filter web build
 
-FROM node:22-alpine AS runner
+FROM node:26.12.1-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV API_PORT=4000
 ENV INTERNAL_API_URL=http://127.0.0.1:4000
-RUN corepack enable
+RUN npm install --global pnpm@10.32.1
 COPY package.json pnpm-workspace.yaml tsconfig.base.json pnpm-lock.yaml ./
 COPY apps/api/package.json apps/api/package.json
 RUN pnpm install --filter api... --frozen-lockfile=false
