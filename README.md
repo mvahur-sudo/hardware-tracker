@@ -5,6 +5,7 @@ Production-minded hardware asset tracking platform for a single organization.
 ## Stack
 
 - **Web:** Next.js 15, TypeScript, App Router
+- **Runtime:** Node.js 26.12.1 (Current, not LTS), pnpm 10.32.1
 - **API:** NestJS 11, TypeScript, REST API
 - **Database:** PostgreSQL 16
 - **ORM:** Prisma
@@ -55,7 +56,12 @@ cp .env.example .env
 
 ### 2. Install
 
+Use the Node.js version pinned in `.nvmrc`. Install pnpm explicitly because
+Node.js 26 does not bundle Corepack:
+
 ```bash
+nvm use
+npm install --global pnpm@10.32.1
 pnpm install
 ```
 

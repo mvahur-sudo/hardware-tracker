@@ -1,6 +1,6 @@
-FROM node:22-alpine AS deps
+FROM node:26.12.1-alpine AS deps
 WORKDIR /app
-RUN corepack enable
+RUN npm install --global pnpm@10.32.1
 COPY package.json pnpm-workspace.yaml tsconfig.base.json ./
 COPY apps/web/package.json apps/web/package.json
 RUN pnpm install --filter web... --frozen-lockfile=false
@@ -10,10 +10,10 @@ WORKDIR /app
 COPY . .
 RUN pnpm --filter web build
 
-FROM node:22-alpine AS runner
+FROM node:26.12.1-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-RUN corepack enable
+RUN npm install --global pnpm@10.32.1
 COPY --from=build /app/apps/web/.next/standalone ./
 COPY --from=build /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=build /app/apps/web/public ./apps/web/public
